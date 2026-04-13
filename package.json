@@ -1,0 +1,15 @@
+{
+  "name": "novu-videochat",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "cd server && npm install && cd ../client && npm install",
+    "start:server": "cd server && node index.js",
+    "start:client": "cd client && npm start",
+    "start": "concurrently \"npm run start:server\" \"npm run start:client\"",
+    "setup": "npm install && npm run install:all"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
