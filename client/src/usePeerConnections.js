@@ -30,7 +30,12 @@ export function usePeerConnections({ socketRef, localStreamRef, onRemoteStream, 
     (peerId) => {
       if (pcsRef.current[peerId]) return pcsRef.current[peerId];
 
-      const pc = new RTCPeerConnection(ICE_SERVERS);
+      // const pc = new RTCPeerConnection(ICE_SERVERS);
+      const pc = new RTCPeerConnection({
+        ...ICE_SERVERS,
+        bundlePolicy: "max-bundle",
+        rtcpMuxPolicy: "require"
+      });
       pcsRef.current[peerId] = pc;
       iceCacheRef.current[peerId] = [];
 
@@ -98,7 +103,7 @@ export function usePeerConnections({ socketRef, localStreamRef, onRemoteStream, 
 
       // Flush cached ICE candidates
       for (const c of iceCacheRef.current[fromId] || []) {
-        await pc.addIceCandidate(new RTCIceCandidate(c)).catch(() => {});
+        await pc.addIceCandidate(new RTCIceCandidate(c)).catch(() => { });
       }
       iceCacheRef.current[fromId] = [];
 
@@ -115,7 +120,7 @@ export function usePeerConnections({ socketRef, localStreamRef, onRemoteStream, 
       await pc.setRemoteDescription(new RTCSessionDescription(sdp));
       // Flush ICE cache
       for (const c of iceCacheRef.current[fromId] || []) {
-        await pc.addIceCandidate(new RTCIceCandidate(c)).catch(() => {});
+        await pc.addIceCandidate(new RTCIceCandidate(c)).catch(() => { });
       }
       iceCacheRef.current[fromId] = [];
     }
@@ -124,7 +129,7 @@ export function usePeerConnections({ socketRef, localStreamRef, onRemoteStream, 
   const handleIceCandidate = useCallback(async ({ fromId, candidate }) => {
     const pc = pcsRef.current[fromId];
     if (pc && pc.remoteDescription) {
-      await pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(() => {});
+      await pc.addIceCandidate(new RTCIceCandidate(candidate)).catch(() => { });
     } else {
       // Cache until remote desc is set
       if (!iceCacheRef.current[fromId]) iceCacheRef.current[fromId] = [];
@@ -135,7 +140,7 @@ export function usePeerConnections({ socketRef, localStreamRef, onRemoteStream, 
   const replaceTrack = useCallback((kind, newTrack) => {
     Object.values(pcsRef.current).forEach((pc) => {
       const sender = pc.getSenders().find((s) => s.track?.kind === kind);
-      if (sender && newTrack) sender.replaceTrack(newTrack).catch(() => {});
+      if (sender && newTrack) sender.replaceTrack(newTrack).catch(() => { });
     });
   }, []);
 

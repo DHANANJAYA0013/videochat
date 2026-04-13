@@ -5,7 +5,7 @@ import VideoTile from './VideoTile';
 import ChatPanel from './ChatPanel';
 import './App.css';
 
-const SIGNAL_SERVER = process.env.REACT_APP_SERVER_URL || 'http://localhost:3001';
+const SIGNAL_SERVER = process.env.REACT_APP_SERVER_URL || 'https://videochat-l7fj.onrender.com';
 
 // ─── Lobby ────────────────────────────────────────────────────────────────────
 function Lobby({ onJoin }) {
